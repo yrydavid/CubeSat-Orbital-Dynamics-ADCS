@@ -179,7 +179,7 @@ out.events=cfg.events;
 
 assert(max(qNormError)<1e-9,'Quaternion normalization failed.');
 % Verify EVERY actuator against its OWN rated limit. This is essential
-% if the user later configures non-identical wheels or torque rods.
+% when using actuator configurations with unequal per-axis limits.
 assert(all(all(abs(h) <= p.hMax' + 1e-10)), ...
     'A wheel exceeded its own nominal momentum capacity.');
 assert(all(all(abs(torqueMotor) <= p.uMax' + 1e-10)), ...

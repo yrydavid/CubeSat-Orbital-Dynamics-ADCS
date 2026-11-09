@@ -1,7 +1,7 @@
 %% RUN_DEMO - CubeSat magnetic momentum unloading A/B (MATLAB R2025b)
 % Uses the same J2 orbit and IGRF-14 fields in BOTH scenarios.
 % Compare wheel unloading enabled vs disabled with nonzero initial h.
-% This file is the only demo entrypoint; no historical step files required.
+% Compares magnetic unloading ON/OFF after the same detumbling phase.
 clear; clc; close all;
 root=fileparts(mfilename('fullpath'));
 addpath(genpath(fullfile(root,'config')));
@@ -71,7 +71,7 @@ if ~isempty(outOn.switchIndex) && ~isempty(outOff.switchIndex)
         'A/B cases differ before dumping is enabled.');
 end
 
-fprintf('A/B integration and physical invariant tests passed.\n');
+fprintf('A/B numerical consistency checks passed.\n');
 fprintf('Dumping improves wheel storage only if ON final h < OFF final h.\n');
 
 %% Figure 1: compare wheel momenta and pointing
@@ -114,7 +114,7 @@ semilogy(outOff.t/3600,max(outOff.HbalanceRel,eps),'--','LineWidth',1.1);
 ylabel('Relative H residual');xlabel('Time [h]');
 legend('ON','OFF','Location','best');grid on;
 
-%% Export validated-by-MATLAB figures for the eventual GitHub README
+%% Export figures for the README
 figDir=fullfile(root,'figures');
 if ~exist(figDir,'dir'); mkdir(figDir); end
 exportgraphics(figUnloading,fullfile(figDir,'momentum_unloading_comparison.png'),'Resolution',200);

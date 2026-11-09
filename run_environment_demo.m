@@ -1,7 +1,7 @@
 %% RUN_ENVIRONMENT_DEMO - J2 orbit and IGRF-14 visualizations
 % MATLAB R2025b + Aerospace Toolbox.
 % Uses the SAME canonical environment functions as run_demo.m.
-% No legacy step14 scripts or assumed magnetic field values required.
+% Uses the same environment model as the attitude simulations.
 clear; clc; close all;
 root = fileparts(mfilename('fullpath'));
 addpath(genpath(fullfile(root,'config')));

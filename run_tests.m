@@ -140,4 +140,43 @@ frameComparison=event_recovery_metrics( ...
 assert(max(frameComparison.angular_rate_difference_deg_s)<1e-10, ...
     'Angular-rate difference must be calculated in a common frame.');
 
+% Overlap classification must be symmetric. A later event cannot be
+% assigned independent recovery statistics while an earlier event is active.
+% Use synthetic identical trajectories to isolate metadata behavior.
+testBase.t=(0:1:20)';
+testBase.q=repmat([1 0 0 0],numel(testBase.t),1);
+testBase.omega=zeros(numel(testBase.t),3);
+testBase.h=zeros(numel(testBase.t),3);
+testPert=testBase;
+
+aTorque=struct('type','torque','time_s',5,'duration_s',6, ...
+    'frame','BODY','vector',[1e-6;0;0]);
+bTorque=struct('type','torque','time_s',8,'duration_s',5, ...
+    'frame','BODY','vector',[0;1e-6;0]);
+m=event_recovery_metrics(testBase,testPert,[aTorque bTorque],0.1,2);
+assert(all([m.event.has_overlapping_event]), ...
+    'Both overlapping finite torque events must be marked.');
+assert(all(isnan([m.event.recoveryTime_s])), ...
+    'Overlapping finite torques cannot have per-event recovery times.');
+
+% An impulse inside a finite torque makes both event attributions ambiguous.
+aImpulse=struct('type','impulse','time_s',9,'duration_s',0, ...
+    'frame','ECI','vector',[1e-5;0;0]);
+m=event_recovery_metrics(testBase,testPert,[aTorque aImpulse],0.1,2);
+assert(all([m.event.has_overlapping_event]), ...
+    'Torque/impulse overlap must be detected in both directions.');
+
+% Two impulses at the same time cannot be separately attributed.
+bImpulse=aImpulse;
+bImpulse.vector=[0;1e-5;0];
+m=event_recovery_metrics(testBase,testPert,[aImpulse bImpulse],0.1,2);
+assert(all([m.event.has_overlapping_event]), ...
+    'Coincident impulses must both be marked as overlapping.');
+
+% Back-to-back events that only meet at an endpoint do not overlap.
+bTorque.time_s=11;
+m=event_recovery_metrics(testBase,testPert,[aTorque bTorque],0.1,2);
+assert(~any([m.event.has_overlapping_event]), ...
+    'Half-open finite torque intervals must not overlap at endpoints.');
+
 fprintf('All integrated CubeSat tests PASSED.\n');

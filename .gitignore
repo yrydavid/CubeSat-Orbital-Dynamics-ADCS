@@ -1,0 +1,16 @@
+# MATLAB editor, binary, and generated intermediate files
+*.asv
+*.autosave
+*.mex*
+*.slxc
+*.m~
+*.mat
+*.fig
+*.mlappinstall
+slprj/
+codegen/
+*.prj.user
+.DS_Store
+Thumbs.db
+outputs/
+results/

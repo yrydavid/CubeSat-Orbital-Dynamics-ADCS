@@ -1,10 +1,10 @@
 # MATLAB R2025b verification and validation ledger
 
-All numerical results below were provided by the project author from MATLAB R2025b on **2026-11-08 and 2026-11-09**. They apply to the previous RC2 physics-core source, which has been preserved without modification in the final code package. The figures/export commands and five top-level scripts were rerun successfully on 2026-11-09. This v1.1 patch adds stricter assertion and overlap checks; those changed tests still need a fresh MATLAB R2025b run. This is numerical validation of **specified scenarios**, not flight qualification.
+The figures and numerical outputs in this document were recorded from MATLAB R2025b runs on **8–9 November 2026**. They describe the reference configuration used for the project's first public release (software **1.0.0**). The physical equations and integration scheme are unchanged by the present documentation and event-metrics corrections. The added event-overlap regression tests have not been independently executed in MATLAB here; run `run_all` to check them locally. These are numerical checks of specified scenarios, not flight qualification or independent experimental validation.
 
-## 1. Short integrated tests
+## 1. Integrated tests
 
-`run_tests`: **All integrated CubeSat tests PASSED**, including quaternion geometry, actuator limits, end-to-end runs, event selection, ideal impulse in ECI, and impulse at t=0 bookkeeping.
+The pre-update `run_tests` execution **passed** the quaternion geometry, actuator-limit, end-to-end, event-selection, ECI impulse and `t=0` impulse bookkeeping tests in MATLAB R2025b. The current source adds additional cases for overlapping events; their outcome must be checked in MATLAB before reporting a complete test-suite pass.
 
 ## 2. Magnetic detumbling, inertial pointing, and wheel unloading
 
@@ -45,17 +45,17 @@ The near-16x reduction of H residual for each 2x reduction of dt is consistent w
 | Quantity | Torque pulse | Angular impulse |
 |---|---:|---:|
 | Peak full-3D attitude separation from clean baseline | 2.091276 deg | 1.993941 deg |
-| Peak angular-rate difference | 0.065721 deg/s (2026-11-09 report) | 0.084079 deg/s (2026-11-09 report) |
+| Peak angular-rate difference | 0.065721 deg/s | 0.084079 deg/s |
 | Peak wheel-momentum difference | 7.282155e-5 N*m*s | 8.633804e-5 N*m*s |
 | First recovery below 0.1 deg **relative** for 600 s, counted after event end | 272 s | 278 s |
 
-The final audited v1 source transforms both angular rates to the same ECI frame before comparison. The user reran the v1 package on 2026-11-09 and reported peak rate differences of 0.065721 and 0.084079 deg/s (same rounded values as before, possible because the maxima occur while the attitude separation is still small). The v1.1 physics equations remain unchanged; re-run its test suite to validate the added test checks.
+Angular-rate differences are computed after expressing both trajectories in ECI axes; the BODY frames generally differ after an event. The values in the table were recorded on 9 November 2026. The event-overlap classification and related tests were updated after those reference runs; rerun `run_tests` to verify that additional logic.
 
 The recovery criterion is the angle between the event-driven attitude and the baseline's attitude **at the same time**. It does **not** claim absolute pointing error below 0.1 deg for a full orbit. Final pointing and last-orbit RMS matched the baseline to the displayed precision, despite nonzero transients.
 
 ## 5. Environmental model and plotted ranges
 
-`run_environment_demo` produced three nominal orbital periods, approximately **4.782 h**. IGRF-14 magnitude ranged **17.971..48.966 microT**; geodetic altitude ranged **543.443..564.780 km**. 3D ECI orbit coloring and time histories were visually reviewed. Geometry and magnetic values are consistent with previous Step-14 reference tests, but comparison to measured flight data has not been performed.
+`run_environment_demo` produced three nominal orbital periods, approximately **4.782 h**. IGRF-14 magnitude ranged **17.971..48.966 microT**; geodetic altitude ranged **543.443..564.780 km**. 3D ECI orbit coloring and time histories were visually reviewed. The plotted geometry and magnetic-field ranges were examined for consistency, but no comparison with flight measurements was performed.
 
 ## 6. Initial natural external torques (computed, not manually imposed)
 
@@ -66,6 +66,6 @@ At t=0 in `run_disturbance_demo`:
 
 These are products of the instantaneous orbit, attitude, Celani's published test inertia/residual-dipole assumption, and the IGRF-14 field; there is no user-imposed constant initial natural torque.
 
-## 7. Publication gate
+## 7. Reproducing the reference case
 
-Before GitHub tagging, in a fresh MATLAB Current Folder, execute all five commands: `run_tests`, `run_environment_demo`, `run_demo`, `run_convergence`, `run_disturbance_demo`. Confirm outputs and all generated PNGs after this final packaging change. Additional options must be revalidated when modified. The simulator does not implement sensor error, orbit translation from impacts, nadir target tracking, or automatic return to detumbling after a large shock.
+From the repository root in MATLAB R2025b with Aerospace Toolbox, run `run_all` (or run the five `run_*.m` scripts individually). These commands exercise the reference configuration and regenerate the PNG files in `figures/`. Re-run and record the output for any changed conditions. The model does not include sensor errors, orbital velocity changes from impacts, nadir tracking or automatic return to detumbling after a large disturbance.

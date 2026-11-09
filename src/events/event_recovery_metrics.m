@@ -2,7 +2,9 @@ function metrics=event_recovery_metrics(base,pert,events,threshold_deg,dwell_s)
 %EVENT_RECOVERY_METRICS Recovery relative to an unperturbed baseline.
 % Relative attitude separation uses the full quaternion rotation, NOT the
 % difference between two scalar pointing errors.
-% Each event is assessed up to the start of the NEXT event (if any).
+% Metrics are computed up to the NEXT event. When event activity overlaps,
+% individual event attribution is undefined and is returned as NaN.
+% Nonoverlapping events still reflect the cumulative simulated trajectory.
 assert(isequal(size(base.q),size(pert.q)) && ...
     isequal(base.t,pert.t),'Baseline and event runs need a shared grid.');
 t=base.t;
@@ -49,10 +51,19 @@ for j=1:numel(events)
     end
     segment=(t>=e.time_s & t<tNext);
     recovery=(t>=tEnd & t<tNext);
-    % Dynamics correctly sum overlapping torques, but a single-event
-    % recovery time cannot be uniquely attributed if another event begins
-    % before the current one finishes (or both begin simultaneously).
-    overlapsNext=(j<numel(events) && tNext<tEnd) || ~any(segment);
+    % Check all other event intervals, including an earlier torque still
+    % active when this event starts. This also catches simultaneous events
+    % and impulses occurring during finite torques.
+    hasOverlap=false;
+    for other=1:numel(events)
+        if other==j
+            continue;
+        end
+        if events_overlap(e,events(other))
+            hasOverlap=true;
+            break;
+        end
+    end
     ids=find(recovery);
     recoveryTime_s=NaN;
     windowLength=round(dwell_s/dt)+1;
@@ -66,14 +77,14 @@ for j=1:numel(events)
     metrics.event(j).name=upper(e.type);
     metrics.event(j).start_s=e.time_s;
     metrics.event(j).end_s=tEnd;
-    metrics.event(j).overlaps_next_event=overlapsNext;
-    if overlapsNext
+    metrics.event(j).has_overlapping_event=hasOverlap;
+    if hasOverlap
         metrics.event(j).max_attitude_separation_deg=NaN;
         metrics.event(j).max_omega_difference_deg_s=NaN;
         metrics.event(j).max_wheel_difference_Nms=NaN;
         metrics.event(j).recoveryTime_s=NaN;
         warning('CubeSat:OverlappingEvents', ...
-            'Overlapping events: isolated per-event metrics are undefined.');
+            'Event at %.1f s overlaps another event; per-event metrics are undefined.',e.time_s);
     else
         metrics.event(j).max_attitude_separation_deg=max(sep(segment));
         metrics.event(j).max_omega_difference_deg_s= ...
@@ -82,5 +93,21 @@ for j=1:numel(events)
             max(metrics.wheel_difference_Nms(segment));
         metrics.event(j).recoveryTime_s=recoveryTime_s;
     end
+end
+end
+
+function tf=events_overlap(a,b)
+%EVENTS_OVERLAP Intervals are [start,end); impulses are time points.
+aTorque=strcmpi(a.type,'torque');
+bTorque=strcmpi(b.type,'torque');
+if aTorque && bTorque
+    tf=max(a.time_s,b.time_s)< ...
+        min(a.time_s+a.duration_s,b.time_s+b.duration_s);
+elseif aTorque
+    tf=b.time_s>=a.time_s && b.time_s<a.time_s+a.duration_s;
+elseif bTorque
+    tf=a.time_s>=b.time_s && a.time_s<b.time_s+b.duration_s;
+else
+    tf=a.time_s==b.time_s;
 end
 end

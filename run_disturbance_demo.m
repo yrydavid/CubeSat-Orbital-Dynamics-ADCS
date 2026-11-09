@@ -116,7 +116,7 @@ xlabel('Time [min]'); ylabel('3D separation from baseline [deg]');
 title('Disturbance-Induced Attitude Separation (Quaternion Metric)');grid on;
 fprintf('Custom-event demo completed; review transient recovery and limits.\n');
 
-%% Export event-response figures from the present run (not legacy plots)
+%% Export event-response figures
 figDir=fullfile(root,'figures');
 if ~exist(figDir,'dir'); mkdir(figDir); end
 exportgraphics(figEventOverview,fullfile(figDir,'disturbance_response.png'),'Resolution',200);
