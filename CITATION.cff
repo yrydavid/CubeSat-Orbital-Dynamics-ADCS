@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this CubeSat simulation in academic work, please cite the software and relevant original scientific references."
+title: "CubeSat Orbital Dynamics & Three-Axis Attitude Control"
+type: software
+authors:
+  - family-names: "Irinei"
+    given-names: "David"
+version: "1.0.0"
+keywords:
+  - CubeSat
+  - spacecraft attitude control
+  - reaction wheels
+  - magnetorquers
+  - MATLAB
+  - IGRF-14
+license: MIT

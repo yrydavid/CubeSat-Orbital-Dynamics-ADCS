@@ -1,0 +1,44 @@
+CUBESAT ORBITAL DYNAMICS & THREE-AXIS ATTITUDE CONTROL
+MATLAB R2025b + Aerospace Toolbox (including igrfmagm)
+
+THIS IS THE FINAL CODE STRUCTURE / RELEASE CANDIDATE, not a flight
+qualified ADCS implementation. Its scientific behavior was checked with
+previous MATLAB runs. These newly packaged PNG exports and config label
+must be checked on the user's MATLAB before publication.
+
+1. Extract this complete folder (do not flatten subfolders).
+2. In MATLAB, set Current Folder to CubeSat-Orbital-Dynamics-ADCS.
+3. Run one command at a time in Command Window:
+
+   run_tests              % short physics, controller, impulse regressions
+   run_environment_demo   % J2 orbit + IGRF-14 figures saved in figures/
+   run_demo               % magnetic unloading ON/OFF plus graphics
+   run_convergence        % dt/env step refinement plus graphics
+   run_disturbance_demo   % torque-pulse/impulse recovery plus graphics
+
+Only the top-level scripts need to be RUN. Do not run the individual
+function .m files. You never need to open every .m file.
+
+Easy user customizations:
+  config/simulation_config.m: numOrbits, initial orbit, initial spin,
+       target inertial quaternion, dt, envDt, low-rate switch threshold,
+       600-second dwell, initial reaction-wheel momenta.
+  config/reference_cubesat.m: actuator limits, reference inertia,
+       PD/B-dot/unloading gains. Manufacturer values should remain
+       unchanged unless studying a documented alternative design.
+  config/disturbance_events.m: arbitrary finite BODY/ECI torques and
+       ideal BODY/ECI angular impulses; supports several overlapping
+       finite torque events. Events are only ACTIVE in run_disturbance_demo
+       unless a script explicitly assigns cfg.events.
+
+Core physics: src/ ; demonstrations: top-level run_*.m ; source tracking:
+docs/parameter_sources.md and docs/references.md ; full model equations:
+docs/mathematical_model.md ; customization: docs/customization.md.
+
+Main model assumptions: perfect feedback, virtual 3U inertial tensor,
+ideal instantaneous motor/dipole commands, inertial fixed pointing,
+no collision translation, no nadir target, no automatic safe-mode reentry,
+assumed UT1-UTC/polar motion, external orbit prescribed from J2 only.
+
+The GitHub README.md, LICENSE and CITATION.cff are purposefully deferred
+until code/figures are confirmed and the repository is ready to publish.
