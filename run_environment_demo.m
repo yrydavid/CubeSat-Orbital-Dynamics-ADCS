@@ -1,6 +1,5 @@
 %% RUN_ENVIRONMENT_DEMO - J2 orbit and IGRF-14 visualizations
 % MATLAB R2025b + Aerospace Toolbox.
-% Uses the SAME canonical environment functions as run_demo.m.
 % Uses the same environment model as the attitude simulations.
 clear; clc; close all;
 root = fileparts(mfilename('fullpath'));
@@ -15,7 +14,7 @@ t_h = env.t / 3600;
 B_uT = env.field_uT;
 Re_km = cfg.Re_km;
 
-% Figure 1: orbit trajectory in ECI colored by real IGRF-14 field magnitude.
+% Figure 1: ECI orbit colored by the modeled IGRF-14 field magnitude.
 fig1 = figure('Name','Orbital Environment - J2 and IGRF-14','Color','w');
 ax = axes(fig1);
 hold(ax,'on');

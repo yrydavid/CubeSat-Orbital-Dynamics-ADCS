@@ -1,7 +1,6 @@
 %% RUN_DEMO - CubeSat magnetic momentum unloading A/B (MATLAB R2025b)
-% Uses the same J2 orbit and IGRF-14 fields in BOTH scenarios.
-% Compare wheel unloading enabled vs disabled with nonzero initial h.
-% Compares magnetic unloading ON/OFF after the same detumbling phase.
+% Compares unloading ON/OFF over three nominal periods with J2 and IGRF-14.
+% Both cases have identical initial conditions and nonzero stored wheel momentum.
 clear; clc; close all;
 root=fileparts(mfilename('fullpath'));
 addpath(genpath(fullfile(root,'config')));
@@ -69,10 +68,15 @@ if ~isempty(outOn.switchIndex) && ~isempty(outOff.switchIndex)
     k=outOn.switchIndex;
     assert(max(abs(outOn.x(1:k,:)-outOff.x(1:k,:)),[],'all')<1e-12, ...
         'A/B cases differ before dumping is enabled.');
+    fprintf('Pre-transition A/B consistency check passed.\n');
+else
+    fprintf('No pointing transition: pre-transition check is unavailable.\n');
 end
-
-fprintf('A/B numerical consistency checks passed.\n');
-fprintf('Dumping improves wheel storage only if ON final h < OFF final h.\n');
+if ~isempty(outOn.switchIndex) && ~isempty(outOff.switchIndex) && ...
+        norm(outOff.h(end,:))>0
+    change_pct=100*(1-norm(outOn.h(end,:))/norm(outOff.h(end,:)));
+    fprintf('Final wheel momentum reduction (ON vs OFF): %.2f%%\n',change_pct);
+end
 
 %% Figure 1: compare wheel momenta and pointing
 figUnloading=figure('Name','CubeSat - Unloading ON versus OFF','Color','w');

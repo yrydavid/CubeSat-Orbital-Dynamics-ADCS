@@ -25,7 +25,7 @@ Quaternion normalization is enforced after each integration step. The reference 
 
 ## Rigid body and actuators
 
-The adopted diagonal inertia `J = diag([0.0409, 0.0409, 0.0065]) kg m^2` comes from a published Tigrisat reference and is treated as the virtual assembly's locked inertia. `h` is the relative rotor angular momentum of three ideal orthogonal reaction wheels and `u` is motor torque *on the rotors*:
+The diagonal inertia `J = diag([0.0409, 0.0409, 0.0065]) kg m^2` comes from the published Tigrisat reference and is adopted as a fixed locked-assembly inertia for this virtual spacecraft. The wheel model propagates angular momentum directly, without calculating rotor speed. Here `h` is the relative rotor angular momentum of three ideal orthogonal wheels, and `u` is motor torque *on the rotors*:
 
 ```text
 H_body = J*omega + h
@@ -46,9 +46,9 @@ Per-axis wheel-motor torque, nominal wheel momentum and magnetic dipole limits a
 
 ## Modes and numerical integration
 
-- **Detumbling:** `m = sat(kB*cross(omega,B_body))`, wheel motor torque zero. This is ideal rate-aided rotational B-dot, not an estimated magnetometer-only algorithm.
+- **Detumbling:** `m = sat(kB*cross(omega,B_body))`, wheel motor torque zero. This is a rate-aided rotational B-dot approximation based on ideal angular-rate feedback. The conventional magnetometer-based law is `m = -kB*dB_body/dt`. The transport relation is `dB_body/dt = C'*dB_eci/dt - cross(omega,B_body)`; this simulation retains only the rotational term. Along-orbit field variation becomes important as the body rate approaches the orbital rate, so the simulated low-rate transition should not be interpreted as the performance of a magnetometer-only B-dot controller.
 - **Pointing:** quaternion-error proportional/derivative control commands three wheel motor torques for a fixed ECI target.
-- **Momentum unloading:** the magnetic torque requested from `-kDump*h` is projected onto the plane normal to `B_body`; wheel feedforward compensates the modeled magnetic torque. The ON/OFF experiment compares the two idealized controllers.
+- **Momentum unloading:** the magnetic torque requested from `-kDump*h` is projected onto the plane normal to `B_body`; wheel feedforward compensates the modeled magnetic torque. If the field magnitude is below 1 nT, the magnetic dipole request is set to zero to avoid division by a near-zero field norm. The ON/OFF experiment compares the two idealized controllers.
 - **Switching:** automatic one-way detumble-to-pointing transition when `norm(omega) < 0.1 deg/s` for 600 consecutive seconds. These thresholds and gains are project choices, not flight-qualified parameters.
 
 The attitude and wheel state uses fixed-step RK4 (2 s nominal) with interpolated magnetic/orbit environment samples (10 s nominal). The orbit is propagated with `ode45`. The inertial angular-momentum accounting check integrates the same external torques in ECI; it is an **internal consistency test**, not independent hardware validation.

@@ -24,6 +24,18 @@ assert(abs(dot(a.tauMag,B))<1e-16);
 assert(dot(w,a.tauMag)<=1e-15);
 assert(all(abs(a.m)<=p.mMax+eps));
 
+% No magnetic torque can be generated for a zero field vector.
+% The unloading request must remain finite without division by zero.
+a=adcs_commands('point_dump',w,q,h,zeros(3,1),p,cfg);
+assert(all(isfinite(a.m)) && all(isfinite(a.u)) && ...
+    all(isfinite(a.tauMag)), ...
+    'Zero-field unloading produced a non-finite control command.');
+assert(norm(a.m)==0 && norm(a.tauMag)==0, ...
+    'Magnetic torque must vanish when B is zero.');
+a=adcs_commands('point_dump',w,q,h,[1e-12;0;0],p,cfg);
+assert(norm(a.m)==0 && all(isfinite(a.u)), ...
+    'Near-zero-field unloading must be disabled safely.');
+
 % Reaction-wheel motor command at positive momentum limit must not
 % continue charging the same wheel outward.
 h=[p.hMax(1);0;0];

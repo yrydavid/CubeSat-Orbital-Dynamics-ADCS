@@ -178,8 +178,7 @@ out.modePolicy=cfg.modePolicy;
 out.events=cfg.events;
 
 assert(max(qNormError)<1e-9,'Quaternion normalization failed.');
-% Verify EVERY actuator against its OWN rated limit. This is essential
-% when using actuator configurations with unequal per-axis limits.
+% Check each actuator against its own limit, including asymmetric setups.
 assert(all(all(abs(h) <= p.hMax' + 1e-10)), ...
     'A wheel exceeded its own nominal momentum capacity.');
 assert(all(all(abs(torqueMotor) <= p.uMax' + 1e-10)), ...

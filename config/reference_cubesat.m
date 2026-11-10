@@ -1,10 +1,9 @@
 function p = reference_cubesat()
-%REFERENCE_CUBESAT Parameter ledger for the virtual 3U reference design.
-% All units SI unless noted. See docs/parameter_sources.md.
+%REFERENCE_CUBESAT Parameters for the virtual 3U reference case.
+% All units SI unless noted. See docs/sources.md.
 %
 % This is NOT a model of the flown Tigrisat hardware configuration.
 p.J = diag([0.0409 0.0409 0.0065]);      % kg*m^2, Celani Eq. (31)
-p.Iwheel = 694.5e-9 * ones(3,1);      % kg*m^2, Astrofein RW1 Type A
 p.hMax = 5.8e-4 * ones(3,1);         % N*m*s, RW1 Type A nominal storage
 p.uMax = 23e-6 * ones(3,1);          % N*m, RW1 Type A max commandable
 p.mMax = 0.4 * ones(3,1);            % A*m^2, CR0004 dipole at 5 V (ideal bidirectional envelope)
@@ -20,6 +19,6 @@ p.Kd = [1.2e-3;1.2e-3;3e-4];         % N*m*s/rad
 % Locked-assembly inertia assumption: wheel relative momentum is added
 % separately; rotor locked inertia is NOT added to p.J again.
 assert(all(eig(p.J)>0) && norm(p.J-p.J','fro')<1e-12);
-assert(all(p.Iwheel>0) && all(p.hMax>0));
+assert(all(p.hMax>0));
 assert(all(p.uMax>0) && all(p.mMax>0));
 end

@@ -13,7 +13,7 @@ C=quat_to_dcm_b2i(q);
 Bb=C'*B_eci_T;
 rhatBody=C'*(r_eci_m/norm(r_eci_m));
 
-% Celani (2021), Eqs. (6),(7),(9); original source for parameters below.
+% Gravity-gradient: Celani (2021), Eq. (7); residual dipole: Sec. 4.
 tauGG=3*(cfg.mu_km*1e9)/norm(r_eci_m)^3 * ...
     cross(rhatBody,p.J*rhatBody);
 tauResidual=cross(p.mResidual,Bb);

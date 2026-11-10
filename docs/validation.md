@@ -1,10 +1,10 @@
-# MATLAB R2025b verification and validation ledger
+# Numerical checks and reference-case results
 
-The figures and numerical outputs in this document were recorded from MATLAB R2025b runs on **8–9 November 2026**. They describe the reference configuration used for the project's first public release (software **1.0.0**). The physical equations and integration scheme are unchanged by the present documentation and event-metrics corrections. The added event-overlap regression tests have not been independently executed in MATLAB here; run `run_all` to check them locally. These are numerical checks of specified scenarios, not flight qualification or independent experimental validation.
+The numerical results below were recorded from MATLAB R2025b simulations on **8–9 November 2026** using the reference configuration in release **1.0.0**. `run_all` executes the available regression tests and demonstration cases. These tests assess numerical consistency for the cases specified here; they do not constitute hardware validation or flight qualification.
 
 ## 1. Integrated tests
 
-The pre-update `run_tests` execution **passed** the quaternion geometry, actuator-limit, end-to-end, event-selection, ECI impulse and `t=0` impulse bookkeeping tests in MATLAB R2025b. The current source adds additional cases for overlapping events; their outcome must be checked in MATLAB before reporting a complete test-suite pass.
+`run_tests` checks quaternion geometry, magnetic-torque direction, actuator limits, mode switching, angular-momentum accounting and event handling, including coincident and overlapping events. The tests use deterministic inputs and do not constitute a statistical robustness campaign.
 
 ## 2. Magnetic detumbling, inertial pointing, and wheel unloading
 
@@ -40,7 +40,7 @@ The near-16x reduction of H residual for each 2x reduction of dt is consistent w
 
 ## 4. Custom external-disturbance recovery
 
-`run_disturbance_demo` uses the default 3 nominal periods, an assumed finite **BODY torque** `[3e-6;-1e-6;0] N*m` at `5000..5020 s`, and an assumed ideal **ECI angular impulse** `[6e-5;0;0] N*m*s` at `8000 s`. These are original stress tests, **not measured spacecraft collisions**.
+`run_disturbance_demo` uses the default 3 nominal periods, an assumed finite **BODY torque** `[3e-6;-1e-6;0] N*m` at `5000..5020 s`, and an assumed ideal **ECI angular impulse** `[6e-5;0;0] N*m*s` at `8000 s`. These are illustrative simulation inputs.
 
 | Quantity | Torque pulse | Angular impulse |
 |---|---:|---:|
@@ -49,7 +49,7 @@ The near-16x reduction of H residual for each 2x reduction of dt is consistent w
 | Peak wheel-momentum difference | 7.282155e-5 N*m*s | 8.633804e-5 N*m*s |
 | First recovery below 0.1 deg **relative** for 600 s, counted after event end | 272 s | 278 s |
 
-Angular-rate differences are computed after expressing both trajectories in ECI axes; the BODY frames generally differ after an event. The values in the table were recorded on 9 November 2026. The event-overlap classification and related tests were updated after those reference runs; rerun `run_tests` to verify that additional logic.
+Angular-rate differences are computed after expressing both trajectories in ECI axes because the BODY frames generally differ after an event. The values in the table were recorded on 9 November 2026. The inputs do not overlap in time. However, they are applied in one combined simulation: the second event's response can retain effects from the first. Metrics are measured against the same disturbance-free baseline and are not independent single-event experiments.
 
 The recovery criterion is the angle between the event-driven attitude and the baseline's attitude **at the same time**. It does **not** claim absolute pointing error below 0.1 deg for a full orbit. Final pointing and last-orbit RMS matched the baseline to the displayed precision, despite nonzero transients.
 
@@ -64,7 +64,7 @@ At t=0 in `run_disturbance_demo`:
 - Gravity-gradient torque in BODY: `[+2.285074e-8; +3.720866e-8; +6.237921e-24] N*m`; norm `4.366510e-8 N*m`.
 - Residual magnetic torque in BODY: `[+1.070204e-10; -2.193685e-9; 0] N*m`; norm `2.196294e-9 N*m`.
 
-These are products of the instantaneous orbit, attitude, Celani's published test inertia/residual-dipole assumption, and the IGRF-14 field; there is no user-imposed constant initial natural torque.
+These values follow from the instantaneous orbit, attitude, published inertia and residual-dipole assumptions, and IGRF-14 field. No additional constant disturbance torque is imposed at the initial time.
 
 ## 7. Reproducing the reference case
 

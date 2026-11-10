@@ -1,12 +1,11 @@
 # Sources and parameter provenance
 
-The spacecraft is a **virtual research configuration**: the cited paper, vendor specifications and assumptions do **not** describe one assembled or flight-tested CubeSat. Literature values, manufacturer limits and project-selected tuning values are separated below.
+This is a virtual reference configuration. The published inertia, actuator specifications and selected simulation settings do not describe a single assembled or flight-tested CubeSat. The origins of the parameters are distinguished below.
 
 | Model input | Value | Provenance |
 |---|---|---|
 | `p.J` | `diag([0.0409,0.0409,0.0065]) kg m^2` | Celani (2021), Eq. 31, published Tigrisat reference inertia; assumed locked inertia of the virtual configuration |
 | `p.mResidual` | `[0;0;3e-4] A m^2` | Celani (2021), Sec. 4, **published simulation assumption**, not measured flight data |
-| `p.Iwheel` | `694.5e-9 kg m^2` per wheel | Astrofein RW1 Type A manufacturer data |
 | `p.hMax` | `5.8e-4 N m s` per wheel | Astrofein RW1 Type A nominal 8000-rpm momentum; chosen operating cap, not mechanical maximum |
 | `p.uMax` | `23e-6 N m` per wheel | Astrofein RW1 Type A maximum commandable torque |
 | `p.mMax` | `0.4 A m^2` per axis | CubeSpace CubeTorquer CR0004 product description, v2.00, Table 3 (p. 7); ideal three-unit orthogonal arrangement assumed |
@@ -30,4 +29,4 @@ The spacecraft is a **virtual research configuration**: the cited paper, vendor 
 
 ## Educational context
 
-Bianca-Andreea Topliceanu, *Attitude Control of a CubeSat* (bachelor's thesis, 2026), is acknowledged for educational background in reference frames, single-axis control and reaction-wheel dynamics. The thesis's Fusion 360 inertias (`0.000634` and `4.607e-5 kg m^2`, Sec. 8.5.1) describe **another** laboratory demonstrator and are **not** used for the virtual 3U inertia or Astrofein wheel rotor. The [IIT Kharagpur/NPTEL course *Satellite Attitude Dynamics and Control*](https://nptel.ac.in/courses/101105077) is an additional educational reference. Neither source is redistributed as a file or presented as having supplied this repo's 3D code.
+Bianca-Andreea Topliceanu, *Attitude Control of a CubeSat* (bachelor's thesis, 2026), is acknowledged for educational background in reference frames, single-axis control and reaction-wheel dynamics. The thesis's Fusion 360 inertias (`0.000634` and `4.607e-5 kg m^2`, Sec. 8.5.1) describe **another** laboratory demonstrator and are **not** used for the virtual 3U inertia or Astrofein wheel rotor. The [IIT Kharagpur/NPTEL course *Satellite Attitude Dynamics and Control*](https://nptel.ac.in/courses/101105077) is an additional educational reference.

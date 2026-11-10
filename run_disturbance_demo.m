@@ -99,8 +99,10 @@ for j=1:numel(rec.event)
         e.max_omega_difference_deg_s);
     fprintf('  Peak wheel-momentum difference: %.6e N*m*s\n', ...
         e.max_wheel_difference_Nms);
-    if isnan(e.recoveryTime_s)
-        fprintf('  Sustained relative recovery: NOT reached before next event/end\n');
+    if e.has_overlapping_event
+        fprintf('  Per-event recovery is undefined: overlapping inputs.\n');
+    elseif isnan(e.recoveryTime_s)
+        fprintf('  Sustained relative recovery not reached before next event/end.\n');
     else
         fprintf('  Recovery to <0.1 deg for 600 s: %.1f s after event end\n', ...
             e.recoveryTime_s);

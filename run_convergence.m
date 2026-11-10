@@ -1,7 +1,7 @@
 %% RUN_CONVERGENCE - Integration and environment-grid sensitivity
 % MATLAB R2025b + Aerospace Toolbox.
 % This is a numerical verification, not a new physical subsystem.
-% No user-defined events, so differences isolate integration and IGRF grids.
+% Both integration and IGRF sampling grids are refined together.
 clear; clc; close all;
 root=fileparts(mfilename('fullpath'));
 addpath(genpath(fullfile(root,'config')));

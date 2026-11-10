@@ -13,4 +13,4 @@ run_demo
 run_convergence
 run_disturbance_demo
 
-fprintf('\nCubeSat run complete. PNG figures saved in the figures folder.\n');
+fprintf('\nAll tests and demonstrations completed without errors; PNG figures were exported.\n');

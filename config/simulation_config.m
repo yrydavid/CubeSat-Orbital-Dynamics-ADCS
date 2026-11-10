@@ -25,7 +25,7 @@ a = [0.3;0.5;0.8]; a = a/norm(a);
 cfg.q0 = [cosd(20);a*sind(20)];      % 40-deg initial rotation
 cfg.omega0_rad_s = deg2rad([0.7;-0.4;1.2]);
 cfg.hwheel0_Nms = zeros(3,1);
-cfg.qTarget = [1;0;0;0];            % inertial pointing target for MVP
+cfg.qTarget = [1;0;0;0];            % fixed ECI pointing target
 
 % Flag for comparison; false = pointing without wheel unloading.
 cfg.enableDumping = true;
@@ -41,8 +41,8 @@ cfg.detumbleRateThreshold_deg_s = 0.10;
 cfg.detumbleDwell_s = 600;
 cfg.minimumDetumble_s = 0;
 
-% Earth orientation: TAI-UTC validated for this date. UT1/polar motion
-% approximated zero; see docs/assumptions_limitations.md.
+% Earth orientation: TAI-UTC is 37 s for the selected epoch (IERS).
+% UT1-UTC and polar motion are approximated as zero; see docs/model.md.
 cfg.deltaAT_s = 37;
 cfg.deltaUT1_s = 0;
 cfg.polarMotion_rad = [0 0];

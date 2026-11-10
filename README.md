@@ -44,7 +44,7 @@ Here `u` is motor torque applied to the **rotors**, with the opposite reaction o
 
 ## Reference-case results
 
-The following values were recorded in MATLAB R2025b runs on **8–9 November 2026** for the reference configuration. They are simulated values, not hardware measurements. The updated event-overlap regression cases should be run locally through `run_all` before treating the revised test suite as passed.
+The following reference-case results were recorded in MATLAB R2025b on **8–9 November 2026**. They are numerical simulation results, not hardware measurements. The `run_all` script reproduces the simulations, runs the tests and exports the figures.
 
 | Quantity | Result |
 |---|---:|
@@ -71,7 +71,7 @@ Both unloading cases briefly reach the chosen **nominal** momentum limit on an i
 
 `run_convergence` compares attitude/environment grids of **2/10**, **1/5** and **0.5/2.5 seconds**. The reported momentum-balance residuals were **1.669 × 10⁻⁷**, **1.012 × 10⁻⁸** and **6.317 × 10⁻¹⁰**, respectively. The trend is consistent with fourth-order behavior for the tested case, although the two grids are refined together and no universal order claim is made.
 
-`run_disturbance_demo` applies two illustrative inputs, not measured collisions: a finite BODY torque at 5000–5020 s and an ECI angular impulse at 8000 s. The maximum 3D attitude separations from the disturbance-free baseline were **2.091276°** and **1.993941°**. Recovery to a **relative** attitude separation below 0.1° sustained for 600 s was reached after **272 s** and **278 s**, respectively, measured from the end of each event. This does not mean absolute pointing accuracy stayed below 0.1°.
+`run_disturbance_demo` applies two illustrative inputs in the same simulation: a finite BODY torque at 5000–5020 s and an ECI angular impulse at 8000 s. The maximum 3D attitude separations from the disturbance-free baseline were **2.091276°** and **1.993941°**. Recovery to a **relative** attitude separation below 0.1° sustained for 600 s was reached after **272 s** and **278 s**, respectively, measured from the end of each event. The second response may include residual effects of the first event. This recovery threshold is relative to the baseline, not an absolute pointing-accuracy bound.
 
 ![Grid convergence](figures/grid_convergence.png)
 
@@ -97,10 +97,10 @@ CubeSat-Orbital-Dynamics-ADCS/
 └── figures/                # generated after running run_all
 ```
 
-Ordinary scenario changes belong in `config/simulation_config.m`, hardware and controller parameters in `config/reference_cubesat.m`, and example disturbance events in `config/disturbance_events.m`. Re-run the tests and figures after changes. `run_demo` and related benchmarks intentionally override selected configuration values (for example, the initial wheel bias) so that the comparisons use controlled initial conditions.
+Ordinary scenario changes belong in `config/simulation_config.m`, hardware and controller parameters in `config/reference_cubesat.m`, and example disturbance events in `config/disturbance_events.m`. Re-run the tests and figures after changes. The demonstration scripts set some scenario-specific values, such as the initial wheel momentum, to ensure a fair comparison.
 
 ## Sources and limitations
 
-The spacecraft's reference inertia is adopted from **Celani (2021)**, while wheel and magnetic-torquer limits are drawn from **Astrofein RW1 Type A** and **CubeSpace CR0004** specifications. Geomagnetic modeling follows **IGRF-14** through the MathWorks Aerospace Toolbox. These are components of a **virtual** model, not specifications for one assembled spacecraft. Initial orbit, control gains and disturbance amplitudes are project choices. Educational background includes the 2026 bachelor's thesis *Attitude Control of a CubeSat* by Bianca-Andreea Topliceanu, whose separate laboratory inertia values are **not** used as this model's 3U inertia.
+The inertia values are taken from **Celani (2021)**; the reaction-wheel and magnetic-torquer limits come from **Astrofein RW1 Type A** and **CubeSpace CR0004** specifications. The field model is **IGRF-14**, evaluated with MathWorks Aerospace Toolbox. These sources describe separate systems, not one assembled spacecraft. The orbit, control gains, switching thresholds and disturbance magnitudes are choices made for this simulation. Bianca-Andreea Topliceanu's 2026 bachelor's thesis *Attitude Control of a CubeSat* was consulted as background reading; its laboratory inertia values are not used here.
 
 Source locators, parameter values and classifications are collected in [sources.md](docs/sources.md). Model assumptions and limitations, including ideal feedback, simplified Earth orientation, instantaneous ideal actuators, no drag/SRP and no safe-mode re-entry, are documented in [model.md](docs/model.md).
